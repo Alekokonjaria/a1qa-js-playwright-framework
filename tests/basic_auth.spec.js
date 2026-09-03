@@ -7,8 +7,13 @@ testWithAuth('should perform Basic Auth action', async ({ customBrowser: browser
   const testData = ConfigReader.getTestData();
   const mainPage = new MainPage(browser.page);
   // Navigate to 'Basic Auth'
+  await mainPage.clickNavigationLink('Basic Auth');
 
   const basicAuth = new BasicAuth(browser.page);
   // Verify that the success message is displayed
 
+  await basicAuth.waitForPageToLoad();
+  expect(await basicAuth.isPageOpened()).toBe(true);
+
+  expect(await basicAuth.getSuccessMessage()).toContain(testData.successfulBasicAuthMessage);
 });
