@@ -35,6 +35,12 @@ const allProjects = [
 ];
 
 export default defineConfig({
+  timeout: 60000,
+  use: {
+    navigationTimeout: 60000,
+    actionTimeout: 15000,
+    baseURL: 'https://the-internet.herokuapp.com',
+  },
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: isCI,
