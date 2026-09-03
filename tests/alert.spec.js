@@ -9,7 +9,7 @@ test('successful message should be displayed after alert handling', async ({ cus
 
   const mainPage = new MainPage(browser.page);
   // Navigate to 'JavaScript Alerts'
-
+  await mainPage.clickNavigationLink('JavaScript Alerts');
 
   const javaScriptAlertsPage = new JavaScriptAlertsPage(browser.page);
   expect(await javaScriptAlertsPage.isPageOpened()).toBe(true);
