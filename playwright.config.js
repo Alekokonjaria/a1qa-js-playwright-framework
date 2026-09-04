@@ -1,66 +1,80 @@
+// @ts-check
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
 
-// Load .env early so all env vars are available for config and framework code.
-// dotenv.config() will not overwrite vars already set in the shell/CI environment.
-dotenv.config();
+/**
+ * Read environment variables from file.
+ * https://github.com/motdotla/dotenv
+ */
+// import dotenv from 'dotenv';
+// import path from 'path';
+// dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const isCI = !!process.env.CI;
-const targetBrowser = process.env.BROWSER || 'chromium';
-
-const allProjects = [
-  {
-    name: 'chromium',
-    use: { ...devices['Desktop Chrome'] },
-  },
-  {
-    name: 'firefox',
-    use: { ...devices['Desktop Firefox'] },
-  },
-  {
-    name: 'webkit',
-    use: { ...devices['Desktop Safari'] },
-  },
-  {
-    name: 'local-headed',
-    use: {
-      browserName: 'chromium',
-      headless: false,
-      viewport: null,
-      launchOptions: {
-        args: ['--start-maximized'],
-      },
-    },
-  },
-];
-
+/**
+ * @see https://playwright.dev/docs/test-configuration
+ */
 export default defineConfig({
-  timeout: 60000,
-  use: {
-    navigationTimeout: 60000,
-    actionTimeout: 15000,
-    baseURL: 'https://the-internet.herokuapp.com',
-  },
   testDir: './tests',
+  /* Run tests in files in parallel */
   fullyParallel: true,
-  forbidOnly: isCI,
-  retries: isCI ? 2 : 0,
-  workers: isCI ? 1 : undefined,
+  /* Fail the build on CI if you accidentally left test.only in the source code. */
+  forbidOnly: !!process.env.CI,
+  /* Retry on CI only */
+  retries: process.env.CI ? 2 : 0,
+  /* Opt out of parallel tests on CI. */
+  workers: process.env.CI ? 1 : undefined,
+  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  reporter: 'html',
+  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  timeout:60000,
+  use: {
+    navigationTimeout: 30000,
+    actionTimeout: 15000,
+    baseURL: 'https://the-internet.herokuapp.com/',
+    trace: 'on-first-retry',
+  },
 
-  reporter: [
-    ['list'],
-    ['html', { open: 'never' }],
-    ...(isCI ? [['junit', { outputFile: 'results.xml' }]] : [])
+  /* Configure projects for major browsers */
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+
+    /* Test against mobile viewports. */
+    // {
+    //   name: 'Mobile Chrome',
+    //   use: { ...devices['Pixel 5'] },
+    // },
+    // {
+    //   name: 'Mobile Safari',
+    //   use: { ...devices['iPhone 12'] },
+    // },
+
+    /* Test against branded browsers. */
+    // {
+    //   name: 'Microsoft Edge',
+    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    // },
+    // {
+    //   name: 'Google Chrome',
+    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    // },
   ],
 
-  use: {
-    headless: isCI ? true : (process.env.HEADLESS !== 'false'),
-    trace: 'retain-on-failure',
-    screenshot: 'only-on-failure',
-
-    baseURL: process.env.BASE_URL || 'https://the-internet.herokuapp.com',
-    acceptDownloads: true,
-  },
-
-  projects: targetBrowser === 'all' ? allProjects : allProjects.filter(p => p.name === targetBrowser),
+  /* Run your local dev server before starting the tests */
+  // webServer: {
+  //   command: 'npm run start',
+  //   url: 'http://localhost:3000',
+  //   reuseExistingServer: !process.env.CI,
+  // },
 });

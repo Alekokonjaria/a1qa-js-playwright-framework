@@ -2,7 +2,6 @@
 import { test, expect } from '#framework/ui/fixtures/browser.fixture.js';
 import MainPage from './pages/MainPage.js';
 import DynamicControlsPage from './pages/DynamicControlsPage.js';
-import Timeouts from '#framework/ui/constants/Timeouts.js';
 
 const randomString = crypto.randomUUID();
 
