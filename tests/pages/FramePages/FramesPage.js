@@ -5,9 +5,14 @@ export default class FramesPage extends BasePage {
   constructor(page) {
     super(new Label(page.getByRole('heading', { name: 'Frames' }), 'Frames page unique element'), 'Frames Page');
     this.nestedFramesButton = new Button(page.getByRole('link', { name: 'Nested Frames' }), 'Nested Frames button');
+    this.iFrameButton = new Button(page.getByRole('link', { name: 'iFrame', exact: true }), 'iFrame button');
   }
 
   async clickNestedFramesButton() {
     await this.nestedFramesButton.click();
+  }
+
+  async clickIframeButton() {
+    await this.iFrameButton.click();
   }
 }

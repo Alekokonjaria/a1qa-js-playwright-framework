@@ -12,10 +12,14 @@ test('interact with text in iFrame', async ({ customBrowser: browser }) => {
   await mainPage.clickNavigationLink('Frames');
 
   const framesPage = new FramesPage(browser.page);
+  await framesPage.waitForPageToLoad();
   await framesPage.clickIframeButton();
 
-  // Implement missed steps
+  const iframePage = new IFramePage(browser.page);
+  await iframePage.waitForPageToLoad();
+  await expect.poll(() => iframePage.getFrameText()).toBe(defaultInputText);
 
+  await iframePage.typeInFrame(randomString);
 
-  expect(await iframePage.getFrameText()).toEqual(defaultInputText);
+  expect(await iframePage.getFrameText()).toEqual(randomString);
 });
