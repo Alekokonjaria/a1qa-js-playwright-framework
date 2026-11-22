@@ -41,9 +41,10 @@ export default defineConfig({
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
 
-  reporter: [
+reporter: [
     ['list'],
     ['html', { open: 'never' }],
+    ['allure-playwright'],
     ...(isCI ? [['junit', { outputFile: 'results.xml' }]] : [])
   ],
 
